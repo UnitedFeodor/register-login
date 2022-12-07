@@ -7,14 +7,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.servlet.ServletContext;
+
 public interface UserFileMap {
 	
 	// somehow fix to relative path
-	final String USER_FILE = "D:\\Program Files 2\\eclipse\\eclipse_workspace\\register-login\\src\\main\\webapp\\WEB-INF\\data\\users.txt";
-	//final String USER_FILE = "WEB-INF\\data\\users.txt";
+	//final String USER_FILE = "D:\\Program Files 2\\eclipse\\eclipse_workspace\\register-login\\src\\main\\webapp\\WEB-INF\\data\\users.txt";
+	final String USER_FILE = "users.txt";
 	
 	default HashMap<String, String> readUsers(String path) {
 		BufferedReader in;
+		
+		
 		try {
 			in = new BufferedReader(new FileReader(path));
 			HashMap<String, String> map = new HashMap<>();

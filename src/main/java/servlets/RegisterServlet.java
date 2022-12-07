@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +33,10 @@ public class RegisterServlet extends HttpServlet implements UserFileMap{
 		// TODO Auto-generated method stub
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
-		HashMap<String, String> userBase = readUsers(USER_FILE);
+		ServletContext context = req.getServletContext();
+		String path = context.getRealPath("/WEB-INF/classes/" + USER_FILE);
+		
+		HashMap<String, String> userBase = readUsers(path);
 		
 		if (password.contains("#")) {
 			RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/RegisterError.jsp");
