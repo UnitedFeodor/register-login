@@ -16,10 +16,13 @@ public interface UserFileMap {
 	
 	final String LOGGED_IN = "WEB-INF/jsp/LoggedIn.jsp";
 	final String REGISTERED = "WEB-INF/jsp/Registered.jsp";
+	
 	final String LOGIN_ERROR = "LoginError.jsp";
 	final String REGISTER_ERROR = "RegisterError.jsp";
 	final String IO_ERROR = "IOError.jsp";
 	
+	final String LOGIN_FORM = "Login.jsp";
+	final String REGISTER_FORM = "Register.jsp";
 	
 	default HashMap<String, String> readUsers(String path) {
 		BufferedReader in;

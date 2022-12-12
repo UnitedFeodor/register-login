@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
@@ -25,57 +26,49 @@ public class Controller extends HttpServlet implements UserFileMap {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		String requestDispatcherPath = null;
+		String nextPage = null;
+		String errorMessage = null;
 		String command = req.getParameter("command");
 		ServletContext context = req.getServletContext();
 		String path = context.getRealPath("/WEB-INF/classes/" + USER_FILE);
 		switch(command) {
 			case "register_command" -> {
+				nextPage = REGISTER_FORM;
+				
 				String username = req.getParameter("username");
 				String password = req.getParameter("password");
 				
 				HashMap<String, String> userBase = readUsers(path);
 				if (userBase == null) {
-					requestDispatcherPath = IO_ERROR;
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
-					//requestDispatcher.forward(req, resp);
+					errorMessage = "IO error: unable to read data";
 					
 				}
 				
 				if (password.contains("#")) {
-					requestDispatcherPath = REGISTER_ERROR;
+					errorMessage = "Password error: can't contain '#' symbol";
 					
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/RegisterError.jsp");
-					
-					//requestDispatcher.forward(req, resp);
-					//return;
+				
 				} else if (username.contains("#")) {
-					requestDispatcherPath = REGISTER_ERROR;
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/RegisterError.jsp");
+					errorMessage = "Username error: can't contain '#' symbol";
 					
-					//requestDispatcher.forward(req, resp);
 					
 				} else if (userBase.containsKey(username)) {
 					// already existing username
-					requestDispatcherPath = REGISTER_ERROR;
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/RegisterError.jsp");
+					errorMessage = "Username error: user already exists in the data base";
 					
-					//requestDispatcher.forward(req, resp);
-					//return;
 				} else {
 					boolean isIOdone = writeUser(path,username, password);
 					if (!isIOdone) {
-						requestDispatcherPath = IO_ERROR;
-						//RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
-						//requestDispatcher.forward(req, resp);
+						errorMessage = "IO error: unable to write data";
 					} else {
-						requestDispatcherPath = REGISTERED;
+						nextPage = REGISTERED;
 					}
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/Registered.jsp");
-					//requestDispatcher.forward(req, resp);
+					
 				}	
 			}
 			case "login_command" -> {
+				nextPage = LOGIN_FORM;
+				
 				String username = req.getParameter("username");
 				String password = req.getParameter("password");
 				
@@ -84,10 +77,7 @@ public class Controller extends HttpServlet implements UserFileMap {
 				
 				
 				if (userBase == null) {
-					requestDispatcherPath = IO_ERROR;
-					
-					//RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
-					//requestDispatcher.forward(req, resp);
+					errorMessage = "IO error: unable to read data";
 					
 				} else {
 				
@@ -106,28 +96,39 @@ public class Controller extends HttpServlet implements UserFileMap {
 						
 					}
 					
-					if (userFound && passwordCorrect) {
-						requestDispatcherPath = LOGGED_IN;
-				 		//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/LoggedIn.jsp");
-						//requestDispatcher.forward(req, resp);
-					} else {
-						requestDispatcherPath = LOGIN_ERROR;
-						//RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/LoginError.jsp");
-						//requestDispatcher.forward(req, resp);
-					}
-				}
+					
+					if (userFound && !passwordCorrect){
+						errorMessage = "Password error: incorrect password for this username";
+
+					} else if (!userFound) {
+						errorMessage = "Username error: no such user found";
+					} else if (userFound && passwordCorrect) {
+						nextPage = LOGGED_IN;
+						
+					} 
 				
+				}
 			}
 			default -> {
-		        //System.err.println("Unexpected value ");
-		        requestDispatcherPath = IO_ERROR;
+		        
+				errorMessage = "Command error: unexpected value";
+				nextPage = LOGIN_FORM;
 		    }
 			
 	
 		}
 		
-		RequestDispatcher requestDispatcher = req.getRequestDispatcher(requestDispatcherPath);
-		requestDispatcher.forward(req, resp);
+		RequestDispatcher requestDispatcher = req.getRequestDispatcher(nextPage);
+		if (errorMessage != null) {
+			
+			PrintWriter out = resp.getWriter();  
+			resp.setContentType("text/html");  
+			out.print(errorMessage + "\n");
+			
+			requestDispatcher.include(req, resp);
+		} else {
+			requestDispatcher.forward(req, resp);
+		}
 		
 	}
 
