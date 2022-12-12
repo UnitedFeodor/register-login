@@ -30,6 +30,12 @@ public class LoginServlet extends HttpServlet implements UserFileMap {
 		String path = context.getRealPath("/WEB-INF/classes/" + USER_FILE);
 		
 		HashMap<String, String> userBase = readUsers(path);
+		if (userBase == null) {
+			RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
+			//resp.getWriter().append("<h2>ERROR! NO SUCH USER OR WRONG PASSWORD!</h2>");
+			requestDispatcher.forward(req, resp);
+			
+		}
 		boolean userFound = false;
 		boolean passwordCorrect = false;
 		for (var usernamePassword : userBase.entrySet()) {

@@ -21,22 +21,22 @@ import interfaces.UserFileMap;
 public class RegisterServlet extends HttpServlet implements UserFileMap{
  
 	
-	//private HashMap<String, String> userBase = new HashMap<>();
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
 		ServletContext context = req.getServletContext();
 		String path = context.getRealPath("/WEB-INF/classes/" + USER_FILE);
 		
 		HashMap<String, String> userBase = readUsers(path);
+		if (userBase == null) {
+			RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
+			requestDispatcher.forward(req, resp);
+			
+		}
 		
 		if (password.contains("#")) {
 			RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/RegisterError.jsp");
@@ -58,8 +58,11 @@ public class RegisterServlet extends HttpServlet implements UserFileMap{
 			requestDispatcher.forward(req, resp);
 			return;
 		}
-		writeUser(USER_FILE,username, password);
-		
+		boolean isIOdone = writeUser(USER_FILE,username, password);
+		if (!isIOdone) {
+			RequestDispatcher requestDispatcher = req.getRequestDispatcher("IOError.jsp");
+			requestDispatcher.forward(req, resp);
+		}
 		RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/jsp/Registered.jsp");
 		requestDispatcher.forward(req, resp);
 		

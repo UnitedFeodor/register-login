@@ -32,12 +32,12 @@ public interface UserFileMap {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			return null;
 		}
-		return null;
 		
 	}
 	
-	default void writeUser(String path, String username, String password) {
+	default boolean writeUser(String path, String username, String password) {
 		
 		HashMap<String, String> userBase = readUsers(USER_FILE);
 		
@@ -53,9 +53,11 @@ public interface UserFileMap {
 			out.write(username + "#" + password);
 			out.newLine();
 			out.close();
+			return true;
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			return false;
 		}
 	    
 	}
