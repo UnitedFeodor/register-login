@@ -8,8 +8,9 @@
 </head>
 <body>
 	<h1>REGISTER</h1>
-	<form action="registered" method="post" > 
+	<form action="controller" method="post" > 
 	
+		<input type="hidden" name="command" value="register_command" />
 		<div>username</div>
 		<input type="text" name="username" >
 		

@@ -8,8 +8,9 @@
 </head>
 <body>
 	<h1>LOGIN</h1>
-	<form action="loggedin" method="post" > 
+	<form action="controller"  method="post" > 
 	
+		<input type="hidden" name="command" value="login_command" />
 		<div>username</div>
 		<input type="text" name="username" >
 		

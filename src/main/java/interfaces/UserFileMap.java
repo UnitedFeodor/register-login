@@ -7,13 +7,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.servlet.ServletContext;
 
 public interface UserFileMap {
 	
 	// somehow fix to relative path
 	//final String USER_FILE = "D:\\Program Files 2\\eclipse\\eclipse_workspace\\register-login\\src\\main\\webapp\\WEB-INF\\data\\users.txt";
 	final String USER_FILE = "users.txt";
+	
+	final String LOGGED_IN = "WEB-INF/jsp/LoggedIn.jsp";
+	final String REGISTERED = "WEB-INF/jsp/Registered.jsp";
+	final String LOGIN_ERROR = "LoginError.jsp";
+	final String REGISTER_ERROR = "RegisterError.jsp";
+	final String IO_ERROR = "IOError.jsp";
+	
 	
 	default HashMap<String, String> readUsers(String path) {
 		BufferedReader in;
@@ -30,7 +36,7 @@ public interface UserFileMap {
 			in.close();
 			return map;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			// 
 			e1.printStackTrace();
 			return null;
 		}
@@ -39,7 +45,7 @@ public interface UserFileMap {
 	
 	default boolean writeUser(String path, String username, String password) {
 		
-		HashMap<String, String> userBase = readUsers(USER_FILE);
+		HashMap<String, String> userBase = readUsers(path);
 		
 		
 	    BufferedWriter out;
@@ -55,7 +61,7 @@ public interface UserFileMap {
 			out.close();
 			return true;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			// 
 			e1.printStackTrace();
 			return false;
 		}

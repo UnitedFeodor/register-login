@@ -8,6 +8,8 @@
 </head>
 <body>
 	<h1> You've successfully logged in!</h1>
+	<p>Username: <%= request.getParameter("username") %></p>
+	<p>Password: <%= request.getParameter("password") %></p>
 	<a href="Login.jsp"> GO BACK TO LOGIN FORM</a>
 </body>
 </html>
